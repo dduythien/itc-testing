@@ -1,30 +1,28 @@
 import { useState, useEffect } from "react";
+import { fetchingPokemonType } from "services/pokemon";
 
-const LIMIT_FETCHING = 24;
-
-interface Pokemon {
-  name: string;
-  url: string;
-}
-
-interface IuseFilter {
+interface IUseFilter {
   currentType: string;
 }
 
-const useFilter = ({ currentType }: IuseFilter) => {
-  const [listType, setListType] = useState<Pokemon[]>([]);
+const useFilter = ({ currentType }: IUseFilter) => {
+  const [listType, setListType] = useState<POKEMON.IPokemonType[]>([]);
   const [listCurrentType, setListCurrentType] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const listCurrentType = String(currentType).split(",");
-    setListCurrentType(listCurrentType);
+    if (currentType) {
+      const listCurrentType = String(currentType).split(",");
+      setListCurrentType(listCurrentType);
+    } else {
+      setListCurrentType([]);
+    }
   }, [currentType]);
 
   useEffect(() => {
     const fetchPokemon = async () => {
       try {
-        const response = await fetch(`https://pokeapi.co/api/v2/type`);
+        const response = await fetchingPokemonType();
         const data: COMMON.ApiResponse<POKEMON.IPokemonType[]> =
           await response.json();
         setListType(data.results || []);

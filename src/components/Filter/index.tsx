@@ -4,14 +4,16 @@ import Button from "components/Filter/FilterButton";
 import React from "react";
 import useFilter from "hooks/useFilter";
 
-interface FilterProps {}
+interface FilterProps {
+  data: POKEMON.IPokemonType[];
+  listCurrentType: string[];
+}
 
-const Filter: React.FC<FilterProps> = () => {
+const Filter: React.FC<FilterProps> = ({ data, listCurrentType }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const currentType = searchParams.get("type") || "";
+
   const router = useRouter();
-  const { listType, listCurrentType } = useFilter({ currentType });
 
   const createPageURL = (typeName: string) => {
     const params = new URLSearchParams(searchParams);
@@ -22,14 +24,19 @@ const Filter: React.FC<FilterProps> = () => {
     } else {
       newTypes = [...listCurrentType, typeName];
     }
-    params.set("type", newTypes.join(","));
+    if (newTypes.length === 0) {
+      params.delete("type");
+    } else {
+      params.set("type", newTypes.join(","));
+    }
+    params.delete("page");
     router.push(`${pathname}?${params.toString()}`);
   };
 
   return (
     <section className="flex flex-wrap items-center gap-x-6 gap-y-3">
       <span>Types:</span>
-      {listType?.map((item) => (
+      {data?.map((item) => (
         <Button
           key={item.url}
           label={item.name}

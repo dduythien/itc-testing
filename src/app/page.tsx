@@ -1,12 +1,32 @@
+"use client";
 import Filter from "components/Filter";
-import Image from "next/image";
+import Pagingation from "components/Pagingation";
+import Pokemons from "components/Pokemons";
+import useFilter from "hooks/useFilter";
+import usePokemons from "hooks/usePokemons";
+import { useSearchParams } from "next/navigation";
 
 export default function Home() {
+  const searchParams = useSearchParams();
+  const currentType = searchParams.get("type") || "";
+  const currentPage = searchParams.get("page") || "";
+
+  console.log("currentType: ", currentType);
+  console.log("currentPage: ", currentPage);
+  const { listType, listCurrentType } = useFilter({ currentType });
+
+  const { listPokemon, pagingInfo } = usePokemons({ currentType, currentPage });
+
   return (
     <div className="flex flex-col gap-4 px-10">
       <p className="text-center">Welcome to Pokemon world</p>
-      <p>Total count: 1302</p>
-      <Filter data={[]} />
+      <p>Total count: {pagingInfo.totalCount}</p>
+      <Filter data={listType} listCurrentType={listCurrentType} />
+      <Pokemons data={listPokemon} />
+      <Pagingation
+        pagingInfo={pagingInfo}
+        currentPage={Number(currentPage || 1)}
+      />
     </div>
   );
 }
