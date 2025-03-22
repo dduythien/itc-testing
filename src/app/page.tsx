@@ -6,14 +6,14 @@ import useFilter from "hooks/useFilter";
 
 import usePokemons from "hooks/usePokemons";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function Home() {
+function HomeContent() {
   const searchParams = useSearchParams();
   const currentType = searchParams.get("type") || "";
   const currentPage = searchParams.get("page") || "";
 
   const { listType, listCurrentType } = useFilter({ currentType });
-
   const { listPokemon, pagingInfo } = usePokemons({ currentType, currentPage });
 
   return (
@@ -27,5 +27,13 @@ export default function Home() {
         currentPage={Number(currentPage || 1)}
       />
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }

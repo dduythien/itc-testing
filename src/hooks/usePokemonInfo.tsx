@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchingListPokemon, fetchingPokemonInfo } from "services/pokemon";
+import { fetchingPokemonInfo } from "services/pokemon";
 import _get from "lodash/get";
 
 interface IUsePokemonInfo {
@@ -15,10 +15,6 @@ const usePokemonInfo = ({ url }: IUsePokemonInfo) => {
   useEffect(() => {
     const fetchPokemonDetail = async () => {
       try {
-        const payload = {
-          limit: 24,
-          offset: 0,
-        };
         const response = await fetchingPokemonInfo(url);
         const data: POKEMON.IPokemonDetailInfo = await response.json();
         const avatar = _get(data, "sprites.other.showdown.front_default", "");

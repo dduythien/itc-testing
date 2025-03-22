@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchingListPokemon, fetchingPokemonByType } from "services/pokemon";
 
-import _uniqBy from "lodash/uniqBy";
-import _flatten from "lodash/flatten";
 const MAX_PAGE_SIZE = 24;
 
 interface IUsePokemons {
@@ -75,6 +73,7 @@ const usePokemons = ({ currentPage, currentType }: IUsePokemons) => {
         const result = res.json();
         return result;
       } catch (error) {
+        console.error(error);
         return {};
       }
     });
@@ -87,7 +86,7 @@ const usePokemons = ({ currentPage, currentType }: IUsePokemons) => {
     pokemonDetails.forEach((typeData, index) => {
       const typeName = selectedTypes[index];
 
-      typeData.pokemon.forEach((entry: any) => {
+      typeData.pokemon.forEach((entry: POKEMON.IPokemonByTypeItem) => {
         const pokemonName = entry.pokemon.name;
         const pokemonUrl = entry.pokemon.url;
         const typeSlot = entry.slot;
@@ -112,7 +111,8 @@ const usePokemons = ({ currentPage, currentType }: IUsePokemons) => {
     });
 
     const matchingPokemon = Array.from(pokemonTypeMap.values()).filter(
-      (pokemon) => pokemon.matchingTypes.length >= 2
+      (pokemon) =>
+        pokemon.matchingTypes.length >= (selectedTypes.length > 1 ? 2 : 1)
     );
 
     console.log(":pokemonByType: ", matchingPokemon);

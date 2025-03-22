@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
       allowedOrigins: ["*"],
     },
   },
+  images: {
+    domains: ["raw.githubusercontent.com"],
+  },
 };
 
 export default nextConfig;

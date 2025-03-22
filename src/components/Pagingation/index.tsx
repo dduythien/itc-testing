@@ -1,8 +1,6 @@
 "use client";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import Button from "components/Filter/FilterButton";
 import React from "react";
-import useFilter from "hooks/useFilter";
 
 interface FilterProps {
   pagingInfo: COMMON.PaginagtionInfo;

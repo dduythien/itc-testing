@@ -3,7 +3,9 @@ declare namespace POKEMON {
     name: string;
     url: string;
   }
-  interface IPokemonInfo extends IPokemonType {}
+  interface IPokemonInfo extends IPokemonType {
+    slot?: number;
+  }
 
   interface IPokemonDetailInfo {
     id: number;
