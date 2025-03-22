@@ -1,8 +1,9 @@
 "use client";
 
-import { fetcher } from "components/utils";
 import React from "react";
 import useSWR from "swr";
+import { fetcher } from "components/utils";
+
 import _get from "lodash/get";
 
 interface ButtonProps {

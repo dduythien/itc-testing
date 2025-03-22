@@ -3,6 +3,7 @@ import Filter from "components/Filter";
 import Pagingation from "components/Pagingation";
 import Pokemons from "components/Pokemons";
 import useFilter from "hooks/useFilter";
+
 import usePokemons from "hooks/usePokemons";
 import { useSearchParams } from "next/navigation";
 
@@ -11,8 +12,6 @@ export default function Home() {
   const currentType = searchParams.get("type") || "";
   const currentPage = searchParams.get("page") || "";
 
-  console.log("currentType: ", currentType);
-  console.log("currentPage: ", currentPage);
   const { listType, listCurrentType } = useFilter({ currentType });
 
   const { listPokemon, pagingInfo } = usePokemons({ currentType, currentPage });

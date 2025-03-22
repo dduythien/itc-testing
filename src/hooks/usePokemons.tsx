@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchingListPokemon, fetchingPokemonByType } from "services/pokemon";
+
 import _uniqBy from "lodash/uniqBy";
 import _flatten from "lodash/flatten";
 const MAX_PAGE_SIZE = 24;
@@ -70,7 +71,8 @@ const usePokemons = ({ currentPage, currentType }: IUsePokemons) => {
     const fetchingList = selectedTypes.map(async (item) => {
       try {
         const res = await fetchingPokemonByType(item);
-        const result = await res.json();
+
+        const result = res.json();
         return result;
       } catch (error) {
         return {};
@@ -80,13 +82,43 @@ const usePokemons = ({ currentPage, currentType }: IUsePokemons) => {
       fetchingList
     );
 
-    console.log(":pokemonDetails: ", pokemonDetails);
-    const listPokemons = pokemonDetails.map((item) => item.pokemon);
-    const merged = _uniqBy(_flatten(listPokemons), (item) => item.pokemon.url);
-    console.log(":merged: ", merged);
+    const pokemonTypeMap = new Map();
+
+    pokemonDetails.forEach((typeData, index) => {
+      const typeName = selectedTypes[index];
+
+      typeData.pokemon.forEach((entry: any) => {
+        const pokemonName = entry.pokemon.name;
+        const pokemonUrl = entry.pokemon.url;
+        const typeSlot = entry.slot;
+
+        const urlParts = pokemonUrl.split("/");
+        const pokemonId = urlParts[urlParts.length - 2];
+
+        if (!pokemonTypeMap.has(pokemonId)) {
+          pokemonTypeMap.set(pokemonId, {
+            id: pokemonId,
+            name: pokemonName,
+            url: pokemonUrl,
+            matchingTypes: [],
+            slots: [],
+          });
+        }
+
+        const pokemonData = pokemonTypeMap.get(pokemonId);
+        pokemonData.matchingTypes.push(typeName);
+        pokemonData.slots.push(typeSlot);
+      });
+    });
+
+    const matchingPokemon = Array.from(pokemonTypeMap.values()).filter(
+      (pokemon) => pokemon.matchingTypes.length >= 2
+    );
+
+    console.log(":pokemonByType: ", matchingPokemon);
     const { totalCount, totalPages, pageSize, currentPageData } =
       calculatePagingation({
-        data: merged.map((item) => item.pokemon),
+        data: matchingPokemon,
         currentPage,
       });
     setPagingInfo({
